@@ -1,3 +1,4 @@
+import React, { Component } from 'react';
 import RNFetchBlob from 'rn-fetch-blob';
 import { Platform } from 'react-native';
 import Toast from 'components/base/toast';
@@ -9,7 +10,8 @@ const config = {
   timeout: 60000
 };
 
-function toQueryString(obj) {
+type Methods = "POST" | "GET" | "DELETE" | "PUT" | "post" | "get" | "delete" | "put";
+function toQueryString(obj: any) {
   return obj
     ? Object.keys(obj)
       .map(k => `${encodeURIComponent(k.toString().trim())}=${encodeURIComponent(obj[k].toString().trim())}`)
@@ -26,7 +28,7 @@ function toQueryString(obj) {
  * @param method
  * @returns {Promise}
  */
-function requestHandle(url, params = null, method = 'POST') {
+function requestHandle(url: string, params = null, method: Methods = 'POST') {
   // 加上所有你需要的header公共参数,比如Authorization
   const _header = {
     'Content-Type': 'application/json;charset=UTF-8',
@@ -66,7 +68,7 @@ function requestHandle(url, params = null, method = 'POST') {
  * @param method
  * @returns {*}
  */
-async function requestHandleVal(url, params = null, isShowLoading=true, isShowError = true, method = 'POST') {
+async function requestHandleVal(url: string, params = null, isShowLoading=true, isShowError = true, method: Methods  = 'POST') {
   // 加上所有你需要的header公共参数,比如Authorization
   const _header = {
     'Content-Type': 'application/json;charset=UTF-8',
@@ -121,13 +123,13 @@ async function requestHandleVal(url, params = null, isShowLoading=true, isShowEr
  * @param error
  * @returns {*}  // offline, timeout, unknown
  */
-function formatNetworkError(error) {
+function formatNetworkError(error: any) {
   const errMsg = error.toString();
   if (errMsg.includes('offline') || errMsg.includes('断开') || errMsg.includes('Failed to connect')) {
-    dialog.toast.info('网络已断开，请检测网络后重试');
+    Toast.info('网络已断开，请检测网络后重试');
     return { code: 'offline', message: '网络已断开，请检测网络后重试', data: '网络已断开，请检测网络后重试' };
   } else if (errMsg.includes('timed out') || errMsg.includes('超时')) {
-    dialog.toast.info('请求超时，请稍后再试');
+    Toast.info('请求超时，请稍后再试');
     return { code: 'timeout', message: '网络异常，请稍后重试', data: '网络异常，请稍后重试' };
   }
   return { code: 'unknown', message: '网络异常，请稍后重试', data: errMsg };
